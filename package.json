@@ -1,6 +1,6 @@
 {
   "name": "dd-event-manager",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "This is private use.",
   "main": "dist/dd-event-manager.js",
   "watch": {

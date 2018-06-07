@@ -27,11 +27,18 @@
     function DDEventManager(context) {
       var _this = this;
 
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          onBeforeAddListener = _ref.onBeforeAddListener,
+          onBeforeRemoveListener = _ref.onBeforeRemoveListener;
+
       _classCallCheck(this, DDEventManager);
 
       this.context = context;
       this._stacks = [];
       this._history = {};
+
+      this.onBeforeAddListener = onBeforeAddListener;
+      this.onBeforeRemoveListener = onBeforeRemoveListener;
 
       var on = function on(typeDefine, listener) {
         _this.addListener(typeDefine, listener);
@@ -127,6 +134,7 @@
 
     DDEventManager.prototype.addListener = function addListener(typeDefine, listener, once) {
       var stack = new DDEventManagerStack(this, typeDefine, listener, once);
+      this.onBeforeAddListener && this.onBeforeAddListener(stack);
       this._stacks.push(stack);
     };
 
@@ -158,6 +166,7 @@
 
 
     DDEventManagerStack.prototype.remove = function remove() {
+      this.context.onBeforeRemoveListener && this.context.onBeforeRemoveListener(this);
       this.context._stacks.splice(this.context._stacks.indexOf(this), 1);
     };
 
@@ -166,8 +175,8 @@
 
       typeDefine = typeDefineSplitter(typeDefine);
 
-      var type = typeDefine.type,
-          tag = typeDefine.tag;
+      var type = typeDefine.type;
+      var tag = typeDefine.tag;
 
       if (type && type !== '' && this.type !== type) {
         return false;
